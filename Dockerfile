@@ -56,7 +56,7 @@ RUN echo $TZ > /etc/timezone && \
     tzdata \
     wget \
     libgomp1 \
-    libprotobuf10 && \
+    libprotobuf17 && \
 #    wget $WORK_FILE && \
     apt purge wget git -y && \
     apt autoclean
