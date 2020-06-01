@@ -44,7 +44,7 @@ RUN echo $TZ > /etc/timezone && \
     libgomp1 \
     libprotobuf17 && \
     apt purge wget git -y && \
-    apt autoclean
+    apt autoclean && chmod +x /root/lc0gpu.sh
 
 ARG BUILD_DATE
 ARG VCS_URL
