@@ -1,4 +1,7 @@
-FROM debian:10-slim as builder
+#### build with 
+#### nvidia-docker build -f Dockerfile-gpu -t chess/lc0:0.25.1 . 
+
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /root
@@ -6,8 +9,6 @@ RUN apt-get update && \
     apt-get install -y \
     python3 \
     ninja-build \
-    protobuf-compiler \
-    libprotobuf-dev \
     python3-pip \
     zlib1g-dev \
     ocl-icd-libopencl1 \
@@ -27,7 +28,8 @@ RUN apt-get update && \
         ln -s /usr/bin/python3 /usr/bin/python && \
     INSTALL_PREFIX=/root/.local ./build.sh -Db_lto=true -Ddefault_library=static >> /root/log-`date +%s`
 
-FROM debian:10-slim
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04
+ENV DEBIAN_FRONTEND=noninteractive
 
 ARG TZ='America/Los_Angeles'
 
@@ -42,7 +44,7 @@ RUN echo $TZ > /etc/timezone && \
     tzdata \
     wget \
     libgomp1 \
-    libprotobuf17 && \
+    libprotobuf10 cuda-toolkit-10-2 && \
     apt purge wget git -y && \
     apt autoclean && chmod +x /root/lc0gpu.sh
 
