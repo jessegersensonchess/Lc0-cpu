@@ -1,5 +1,5 @@
 #### build with 
-#### nvidia-docker build -f Dockerfile-gpu -t chess/lc0:0.25.1 . 
+#### nvidia-docker build -f Dockerfile-gpu -t chess/lc0:latest . 
 
 FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 as builder
 
@@ -21,8 +21,7 @@ RUN apt-get update && \
     git clone --recurse-submodules https://github.com/LeelaChessZero/lc0.git && \
     cd lc0 && \
     #git checkout $(git tag --list |grep -v rc |tail -1) && \
-    #git checkout $(git tag --list |tail -1) && \
-    git checkout 69105b4 && \
+    git checkout $(git tag --list |tail -1) && \
     pip3 install virtualenv --user && \
     pip3 install meson --user && \
         ln -s /usr/bin/python3 /usr/bin/python && \
