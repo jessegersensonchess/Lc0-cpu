@@ -1,9 +1,9 @@
 #### build with 
-#### nvidia-docker build -f Dockerfile-gpu -t chess/lc0:latest . 
-
-FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04 as builder
-
+#### nvidia-docker build -f /home/enginemaster/cccc-server/cutechess/build/Dockerfile-lc0-gpu -t "chess/lc0:${TAG}" .
+FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04 as builder
 ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
+
 WORKDIR /root
 RUN apt-get update && \
     apt-get install -y \
@@ -12,23 +12,22 @@ RUN apt-get update && \
     python3-pip \
     zlib1g-dev \
     ocl-icd-libopencl1 \
-    tzdata \
     wget \
     git \
-    python3-venv && \
-
-    PATH="/$HOME/.local/bin:$PATH" && \
-    git clone --recurse-submodules https://github.com/LeelaChessZero/lc0.git && \
+    python3-venv
+RUN PATH="/$HOME/.local/bin:$PATH" && \
+ git clone --recurse-submodules https://github.com/LeelaChessZero/lc0.git && \
+        echo hi && \
     cd lc0 && \
-    #git checkout $(git tag --list |grep -v rc |tail -1) && \
     git checkout $(git tag --list |tail -1) && \
     pip3 install virtualenv --user && \
     pip3 install meson --user && \
         ln -s /usr/bin/python3 /usr/bin/python && \
     INSTALL_PREFIX=/root/.local ./build.sh -Db_lto=true -Ddefault_library=static >> /root/log-`date +%s`
 
-FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04
+FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04
 ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
 
 ARG TZ='America/Los_Angeles'
 
@@ -40,10 +39,10 @@ COPY lc0gpu.sh /root
 RUN echo $TZ > /etc/timezone && \
     apt-get update && \
     apt-get install -y \
-    tzdata \
     wget \
-    libgomp1 \
-    libprotobuf10 cuda-toolkit-10-2 && \
+        libgomp1 \
+        libprotobuf10 \
+        cuda-toolkit-11-0 && \
     apt purge wget git -y && \
     apt autoclean && chmod +x /root/lc0gpu.sh
 
@@ -56,4 +55,3 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.schema-version="1.0.0"
 
 CMD [ "/root/lc0gpu.sh" ]
-
