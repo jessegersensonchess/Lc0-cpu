@@ -1,5 +1,5 @@
 #### build with 
-#### nvidia-docker build -f /home/enginemaster/cccc-server/cutechess/build/Dockerfile-lc0-gpu -t "chess/lc0:${TAG}" .
+#### nvidia-docker build -f Dockerfile-lc0-gpu -t "chess/lc0:${TAG}" .
 FROM nvidia/cuda:11.0-cudnn8-devel-ubuntu18.04 as builder
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
